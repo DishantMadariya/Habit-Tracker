@@ -281,7 +281,14 @@ The **reminder system** uses `node-cron` to send daily reminders to users about 
 
 ```javascript
 cron.schedule('0 9 * * *', async () => {
-    // Logic to send reminders
+    try {
+        const habits = await Habit.find({ frequency: 'daily' });
+        habits.forEach(habit => {
+            notificationService.sendReminder(habit.userId, habit);
+        });
+    } catch (error) {
+        console.error('Error sending reminders:', error.message);
+    }
 });
 ```
 
